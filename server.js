@@ -8,10 +8,10 @@ const storage = multer.diskStorage({
     filename: function(req,file,cb){
         cb(null,Date.now() + '.' + file.mimetype.split('/')[1])
     },
-    
+
 })
 
 const upload = multer({storage:storage})
 app.use(cors());
     app.post('/',upload.single('file'),(req,res) => {})
-    app.listener(port, ()=> console.log(`listening on port ${port}`));
+    app.listen(port, ()=> console.log(`listening on port ${port}`));
