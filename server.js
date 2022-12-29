@@ -32,8 +32,8 @@ const corsOptions = {
 
 const upload = multer({ storage: storage })
 app.use('*', cors(corsOptions));
-// upload.single('file')
-app.post('/', console.log('test'), (req, res) => { 
-
+//
+app.post('/',  upload.single('file'), (req, res) => { 
+console.log('file')
 })
 app.listen(port, () => console.log(`listening on port ${port}`));
