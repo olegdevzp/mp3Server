@@ -34,6 +34,10 @@ const upload = multer({ storage: storage })
 app.use('*', cors(corsOptions));
 //
 app.post('/',  upload.single('file'), (req, res) => { 
-console.log('file')
+// console.log('file')
 })
+app.post('/', cors(corsOptions), (req, res, next) => {
+    res.json({ message: 'This route is CORS-enabled for an allowed origin.' });
+  });
+  
 app.listen(port, () => console.log(`listening on port ${port}`));
