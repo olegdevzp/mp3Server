@@ -1,49 +1,146 @@
+const mongoose = require('mongoose')
 const express = require('express');
 const cors = require('cors');
 const app = express();
 const port = process.env.PORT || 3000;
 const multer = require('multer');
+const dotenv = require('dotenv')
+const fs = require('fs')
+const router = express.Router()
+const mongoClient = mongodb.MongoClient
+const binary = mongodb.Binary
+
 const storage = multer.diskStorage({
-    destination: './',
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + '.' + file.mimetype.split('/')[1])
-    },
+  destination: './',
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '.' + file.mimetype.split('/')[1])
+  },
 
 })
 
+dotenv.config({ path: './config.env' });;
+
+const DB = process.env.DATABASE.replace(
+  '<DATABASE_PASSWORD>',
+  process.env.DATABASE_PASSWORD
+)
+// mongoose.set("strictQuery", true);
+// mongoose
+// .connect(DB, {
+//   // .connect(process.env.DATABASE_LOCAL, {
+//   //
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true
+//   // useCreateIndex: true,
+//   // useFindAndModify: false
+// }).then((con) => {
+//   console.log(con.connections);
+//   console.log('DB connection successful');
+// })
+
+
+
 const allowedOrigins = [
-    'capacitor://localhost',
-    'ionic://localhost',
-    'http://localhost',
-    'http://localhost:8080',
-    'http://localhost:8100',
+  'capacitor://localhost',
+  'ionic://localhost',
+  'http://localhost',
+  'http://localhost:8080',
+  'http://localhost:8100',
 ];
 
 // Reflect the origin if it's in the allowed list or not defined (cURL, Postman, etc.)
 const corsOptions = {
-    origin: (origin, callback) => {
-        if (allowedOrigins.includes(origin) || !origin) {
-            callback(null, true);
-        } else {
-            callback(new Error('Origin not allowed by CORS'));
-        }
-    },
+  origin: (origin, callback) => {
+    if (allowedOrigins.includes(origin) || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Origin not allowed by CORS'));
+    }
+  },
 };
 
 const upload = multer({ storage: storage })
 app.use('*', cors(corsOptions));
+app.use(fileUpload())
 //
 // app.post('/',  upload.single('file'), (req, res) => { 
 // console.log('file')
 // })
 app.post('/', cors(corsOptions), (req, res, next) => {
-    res.json({ message: 'This route is CORS-enabled for an allowed origin.' });
-  });
-  
-  app.get("/", (req, res) => res.type('html').send(html));
+  res.json({ message: 'This route is CORS-enabled for an allowed origin.' });
+});
 
+// app.get("/", (req, res) => res.type('html').send(html)
+
+// );
+
+router.post("/upload", (req, res) => {
+  let file = { name: req.body.name, file: binary(req.files.uploadedFile.data) }
+  insertFile(file, res)
+})
+
+
+function insertFile(file, res) {
+  mongoClient.connect(process.env.DATABASE, { useNewUrlParser: true }, (err, client) => {
+      if (err) {
+          return err
+      }
+      else {
+          let db = client.db('natours')
+          let collection = db.collection('audio')
+          try {
+              collection.insertOne(file)
+              console.log('File Inserted')
+          }
+          catch (err) {
+              console.log('Error while inserting:', err)
+          }
+          client.close()
+          res.redirect('/')
+      }
+
+  })
+}
+
+function getFiles(res) {
+  mongoClient.connect(process.env.DATABASE, { useNewUrlParser: true }, (err, client) => {
+      if (err) {
+          return err
+      }
+      else {
+          let db = client.db('natours')
+          let collection = db.collection('audio')
+          collection.find({}).toArray((err, doc) => {
+              if (err) {
+                  console.log('err in finding doc:', err)
+              }
+              else {
+                  let buffer = doc[0].file.buffer
+                  fs.writeFileSync('uploadedImage.jpg', buffer)
+              }
+          })
+          client.close()
+          res.redirect('/')
+      }
+
+  })
+}
+
+app.use("/", router)
 
 app.listen(port, () => console.log(`listening on portt ${port}`));
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
