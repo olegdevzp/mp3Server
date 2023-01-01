@@ -5,6 +5,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 const multer = require('multer');
 const dotenv = require('dotenv')
+const fileUpload = require('express-fileupload')
 const fs = require('fs')
 const router = express.Router()
 const mongodb = require('mongodb')
