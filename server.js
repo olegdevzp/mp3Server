@@ -100,12 +100,12 @@ app.post("/upload", async (req, res) => {
    
 })
 
- function makeFile(data) {
-  return await new Promise((resolve, reject) => {
+//  function async makeFile(data) {
+//   return await new Promise((resolve, reject) => {
     
-    resolve(file);
-  })
-}
+//     resolve(file);
+//   })
+// }
 
 function insertFile(file, res) {
   mongoClient.connect(process.env.DATABASE, { useNewUrlParser: true }, (err, client) => {
@@ -124,6 +124,7 @@ function insertFile(file, res) {
       }
       client.close()
       res.redirect('/')
+      res.send()
     }
 
   })
