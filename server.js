@@ -68,9 +68,9 @@ app.use(fileUpload())
 // app.post('/',  upload.single('file'), (req, res) => { 
 // console.log('file')
 // })
-// app.post('/', cors(corsOptions), (req, res, next) => {
-//   res.json({ message: 'This route is CORS-enabled for an allowed origin.' });
-// });
+app.post('/', cors(corsOptions), (req, res, next) => {
+  res.json({ message: 'This route is CORS-enabled for an allowed origin.' });
+});
 
 app.get("/", (req, res) => res.type('html').send(html)
 
