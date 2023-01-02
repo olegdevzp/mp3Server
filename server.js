@@ -11,6 +11,7 @@ const router = express.Router()
 const mongodb = require('mongodb')
 const mongoClient = mongodb.MongoClient
 const binary = mongodb.Binary
+const bodyParser = require('body-parser');
 
 const storage = multer.diskStorage({
   destination: './',
@@ -63,6 +64,9 @@ const corsOptions = {
 
 const upload = multer({ storage: storage })
 app.use('*', cors(corsOptions));
+
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json())
 app.use(fileUpload())
 //
 // app.post('/',  upload.single('file'), (req, res) => { 
