@@ -68,17 +68,21 @@ app.use(fileUpload())
 // app.post('/',  upload.single('file'), (req, res) => { 
 // console.log('file')
 // })
-app.post('/', cors(corsOptions), (req, res, next) => {
-  res.json({ message: 'This route is CORS-enabled for an allowed origin.' });
-});
+// app.post('/', cors(corsOptions), (req, res, next) => {
+//   res.json({ message: 'This route is CORS-enabled for an allowed origin.' });
+// });
 
-// app.get("/", (req, res) => res.type('html').send(html)
+app.get("/", (req, res) => res.type('html').send(html)
 
-// );
+);
+app.post("/", (req, res) => {
+  console.log('file upload post',req);
 
-router.post("/upload", (req, res) => {
-  let file = { name: req.body.name, file: binary(req.files.uploadedFile.data) }
-  insertFile(file, res)
+})
+app.post("/upload", (req, res) => {
+  console.log('file upload',req);
+  // let file = { name: req.body.name, file: binary(req.files.uploadedFile.data) }
+  // insertFile(file, res)
 })
 
 
@@ -128,9 +132,9 @@ function getFiles(res) {
   })
 }
 
-app.use("/", router)
+// app.use("/", router)
 
-app.listen(port, () => console.log(`listening on portt ${port}`));
+app.listen(port, () => console.log(`listening on port ${port}`));
 
 
 
