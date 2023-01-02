@@ -85,7 +85,7 @@ app.post("/", (req, res) => {
 })
 app.post("/upload", async (req, res) => {
   console.log('post file upload', req);
-  if(!req.body) return res.sendStatus(400);
+  if (!req.body) return res.sendStatus(400);
 
   console.log('req.body.name', req.body['name']);
   // let file = { name: 'audio', file: binary(req.body['audio']) }
@@ -97,12 +97,12 @@ app.post("/upload", async (req, res) => {
   // ,(error)=>{
   //   console.log('makeFile',error);
   // }})
-   
+
 })
 
 //  function async makeFile(data) {
 //   return await new Promise((resolve, reject) => {
-    
+
 //     resolve(file);
 //   })
 // }
@@ -127,6 +127,10 @@ function insertFile(file, res) {
       res.send()
     }
 
+  }).then((res) => {
+    console.log('mongoClient', res);
+  },(error)=>{
+    console.log('mongoClient error', error);
   })
 }
 
