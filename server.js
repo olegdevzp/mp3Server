@@ -9,7 +9,8 @@ const fileUpload = require('express-fileupload')
 const fs = require('fs')
 const router = express.Router()
 const mongodb = require('mongodb')
-const mongoClient = mongodb.MongoClient
+const {MongoClient} = require('mongodb');
+// const mongoClient = new MongoClient()
 const binary = mongodb.Binary
 const bodyParser = require('body-parser');
 
@@ -27,6 +28,11 @@ const DB = process.env.DATABASE.replace(
   '<DATABASE_PASSWORD>',
   process.env.DATABASE_PASSWORD
 )
+const client = new MongoClient(DB);
+
+
+
+
 // mongoose.set("strictQuery", true);
 // mongoose
 // .connect(DB, {
@@ -40,8 +46,38 @@ const DB = process.env.DATABASE.replace(
 //   console.log(con.connections);
 //   console.log('DB connection successful');
 // })
+async function main(){
+  /**
+   * Connection URI. Update <username>, <password>, and <your-cluster-url> to reflect your cluster.
+   * See https://docs.mongodb.com/ecosystem/drivers/node/ for more details
+   */
+  // const uri = "mongodb+srv://<username>:<password>@<your-cluster-url>/test?retryWrites=true&w=majority";
 
 
+  const client = new MongoClient(DB);
+
+  try {
+      // Connect to the MongoDB cluster
+      await client.connect();
+
+      // Make the appropriate DB calls
+      await  listDatabases(client);
+
+  } catch (e) {
+      console.error(e);
+  } finally {
+      await client.close();
+  }
+}
+
+main().catch("client===>",console.error);
+
+async function listDatabases(client){
+  databasesList = await client.db().admin().listDatabases();
+
+  console.log("Databases:");
+  databasesList.databases.forEach(db => console.log(` - ${db.name}`));
+};
 
 const allowedOrigins = [
   'capacitor://localhost',
@@ -108,7 +144,7 @@ app.post("/upload", async (req, res) => {
 // }
 
 function insertFile(file, res) {
-  mongoClient.connect(DB, { useNewUrlParser: true }, (err, client) => {
+  client.connect(DB, (err, client) => {
     console.log('mongoClient ', client);
 
     if (err) {
@@ -121,11 +157,12 @@ function insertFile(file, res) {
       try {
         collection.insertOne(file).then(()=>{
           console.log('File Inserted')
+          res.send({success:'success'})
         },(err)=> {
           console.log('Error while inserting1:', err)
         })
        
-        res.send({success:'success'})
+       
       }
       catch (err) {
         console.log('Error while inserting2:', err)
