@@ -80,9 +80,9 @@ app.post("/", (req, res) => {
 
 })
 app.post("/upload", async (req, res) => {
-  console.log('post file upload', req.body);
+  console.log('post file upload', req.audio);
   // let file = { name: 'audio', file: binary(req.body['audio']) }
-  makeFile(req.body.audio).then((file)=>{
+  makeFile(req.audio).then((file)=>{
     insertFile(file, res)
   })
    
@@ -131,7 +131,7 @@ function getFiles(res) {
         }
         else {
           let buffer = doc[0].file.buffer
-          fs.writeFileSync('uploadedImage.jpg', buffer)
+          fs.writeFileSync('audio.mp3', buffer)
         }
       })
       client.close()
