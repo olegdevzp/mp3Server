@@ -81,7 +81,7 @@ app.post("/", (req, res) => {
 })
 app.post("/upload", (req, res) => {
   console.log('post file upload',req.body);
-  let file = { name: req.body.name, file: binary(req.files) }
+  let file = { name: 'audio-file', file: binary(req.audio-file) }
   insertFile(file, res)
 })
 
