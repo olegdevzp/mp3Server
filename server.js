@@ -109,7 +109,10 @@ app.post("/upload", async (req, res) => {
 
 function insertFile(file, res) {
   mongoClient.connect(process.env.DATABASE, { useNewUrlParser: true }, (err, client) => {
+    console.log('mongoClient ', client);
+
     if (err) {
+      console.log('mongoClient error', err);
       return err
     }
     else {
@@ -127,11 +130,12 @@ function insertFile(file, res) {
       res.send()
     }
 
-  }).then((res) => {
-    console.log('mongoClient', res);
-  },(error)=>{
-    console.log('mongoClient error', error);
   })
+//   .then((res) => {
+//     console.log('mongoClient', res);
+//   },(error)=>{
+//     console.log('mongoClient error', error);
+//   })
 }
 
 function getFiles(res) {
