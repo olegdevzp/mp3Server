@@ -80,8 +80,8 @@ app.post("/", (req, res) => {
 
 })
 app.post("/upload", (req, res) => {
-  console.log('post file upload',req);
-  let file = { name: req.body.name, file: binary(req.files.uploadedFile.data) }
+  console.log('post file upload',req.body);
+  let file = { name: req.body.name, file: binary(req.files) }
   insertFile(file, res)
 })
 
@@ -98,7 +98,7 @@ function insertFile(file, res) {
               collection.insertOne(file)
               console.log('File Inserted')
           }
-          catch (err) {
+          catch (err) { 
               console.log('Error while inserting:', err)
           }
           client.close()
