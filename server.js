@@ -9,7 +9,7 @@ const fileUpload = require('express-fileupload')
 const fs = require('fs')
 const router = express.Router()
 const mongodb = require('mongodb')
-const {MongoClient} = require('mongodb');
+const { MongoClient } = require('mongodb');
 // const mongoClient = new MongoClient()
 const binary = mongodb.Binary
 const bodyParser = require('body-parser');
@@ -46,7 +46,44 @@ const client = new MongoClient(DB);
 //   console.log(con.connections);
 //   console.log('DB connection successful');
 // })
-async function main(){
+
+
+async function test() {
+
+  try {
+    await client.connect()
+    await testdb();
+  }
+  catch (err) {
+    console.log('Error while inserting2:', err)
+  }
+  finally {
+    await client.close();
+  }
+  // console.log('mongoClient ', client);
+
+
+  async function testdb() {
+    let db = client.db('natours')
+    let collection = db.collection('audio')
+    collection.insertOne({ 'file': 'res' })
+  }
+
+
+  // if (err) {
+  //   console.log('mongoClient error', err);
+  //   return err
+  // }
+  // else {
+  // client.close()
+
+}
+
+// test();
+
+
+
+async function main() {
   /**
    * Connection URI. Update <username>, <password>, and <your-cluster-url> to reflect your cluster.
    * See https://docs.mongodb.com/ecosystem/drivers/node/ for more details
@@ -57,25 +94,28 @@ async function main(){
   const client = new MongoClient(DB);
 
   try {
-      // Connect to the MongoDB cluster
-      await client.connect();
+    // Connect to the MongoDB cluster
+    await client.connect();
 
-      // Make the appropriate DB calls
-      await  listDatabases(client);
+    // Make the appropriate DB calls
+    await listDatabases(client);
 
   } catch (e) {
-      console.error(e);
+    console.error(e);
   } finally {
-      await client.close();
+    // await client.close();
   }
 }
 
-main().catch("client===>",console.error);
+// main().catch("client===>", console.error);
 
-async function listDatabases(client){
+async function listDatabases(client) {
   databasesList = await client.db().admin().listDatabases();
 
+  
+  collection.insertOne({ 'file': 'res' })
   console.log("Databases:");
+
   databasesList.databases.forEach(db => console.log(` - ${db.name}`));
 };
 
@@ -119,6 +159,7 @@ app.post("/", (req, res) => {
   console.log(' post /');
 
 })
+
 app.post("/upload", async (req, res) => {
   console.log('post file upload', req);
   if (!req.body) return res.sendStatus(400);
@@ -126,7 +167,7 @@ app.post("/upload", async (req, res) => {
   console.log('req.body.name', req.body['name']);
   // let file = { name: 'audio', file: binary(req.body['audio']) }
   let file = { name: 'audio', file: binary(req.body.data) }
-  insertFile(file, res)
+  insertFile(file, res).catch("client===>", console.error);
 
   // makeFile(req.body.data).then((file)=>{
 
@@ -143,41 +184,46 @@ app.post("/upload", async (req, res) => {
 //   })
 // }
 
-function insertFile(file, res) {
-  client.connect(DB, (err, client) => {
-    console.log('mongoClient ', client);
+async function insertFile(file, res) {
+  await client.connect();
+  let db = client.db('natours')
+  let collection = db.collection('audio')
+  collection.insertOne(file)
 
-    if (err) {
-      console.log('mongoClient error', err);
-      return err
-    }
-    else {
-      let db = client.db('natours')
-      let collection = db.collection('audio')
-      try {
-        collection.insertOne(file).then(()=>{
-          console.log('File Inserted')
-          res.send({success:'success'})
-        },(err)=> {
-          console.log('Error while inserting1:', err)
-        })
-       
-       
-      }
-      catch (err) {
-        console.log('Error while inserting2:', err)
-      }
-      client.close()
-      res.redirect('/')
-     
-    }
+  // client.connect(DB, (err, client) => {
+  //   console.log('mongoClient ', client);
 
-  })
-//   .then((res) => {
-//     console.log('mongoClient', res);
-//   },(error)=>{
-//     console.log('mongoClient error', error);
-//   })
+  //   if (err) {
+  //     console.log('mongoClient error', err);
+  //     return err
+  //   }
+  //   else {
+  //     let db = client.db('natours')
+  //     let collection = db.collection('audio')
+  //     try {
+  //       collection.insertOne(file).then(() => {
+  //         console.log('File Inserted')
+  //         res.send({ success: 'success' })
+  //       }, (err) => {
+  //         console.log('Error while inserting1:', err)
+  //       })
+
+
+  //     }
+  //     catch (err) {
+  //       console.log('Error while inserting2:', err)
+  //     }
+  //     client.close()
+  //     res.redirect('/')
+
+  //   }
+
+  // })
+  //   .then((res) => {
+  //     console.log('mongoClient', res);
+  //   },(error)=>{
+  //     console.log('mongoClient error', error);
+  //   })
 }
 
 function getFiles(res) {
