@@ -84,7 +84,7 @@ app.post("/", (req, res) => {
 
 })
 app.post("/upload", async (req, res) => {
-  // console.log('post file upload', req);
+  console.log('post file upload', req);
   if(!req.body) return res.sendStatus(400);
 
   console.log('req.body.name', req.body['name']);
