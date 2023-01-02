@@ -89,17 +89,20 @@ app.post("/upload", async (req, res) => {
 
   console.log('req.body.name', req.body['name']);
   // let file = { name: 'audio', file: binary(req.body['audio']) }
-  makeFile(req.body.data).then((file)=>{
-    insertFile(file, res)
-  ,(error)=>{
-    console.log('makeFile',error);
-  }})
+  let file = { name: 'audio', file: binary(data) }
+  insertFile(file, res)
+
+  // makeFile(req.body.data).then((file)=>{
+
+  // ,(error)=>{
+  //   console.log('makeFile',error);
+  // }})
    
 })
 
-async function makeFile(data) {
+ function makeFile(data) {
   return await new Promise((resolve, reject) => {
-    let file = { name: 'audio', file: binary(data) }
+    
     resolve(file);
   })
 }
