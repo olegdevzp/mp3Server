@@ -76,11 +76,11 @@ app.get("/", (req, res) => res.type('html').send(html)
 
 );
 app.post("/", (req, res) => {
-  console.log('file upload post',req);
+  console.log(' post /');
 
 })
 app.post("/upload", (req, res) => {
-  console.log('file upload',req);
+  console.log('post file upload');
   // let file = { name: req.body.name, file: binary(req.files.uploadedFile.data) }
   // insertFile(file, res)
 })
