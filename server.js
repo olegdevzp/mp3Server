@@ -121,13 +121,14 @@ function insertFile(file, res) {
       try {
         collection.insertOne(file)
         console.log('File Inserted')
+        res.send({success:'success'})
       }
       catch (err) {
         console.log('Error while inserting:', err)
       }
       client.close()
       res.redirect('/')
-      res.send()
+     
     }
 
   })
