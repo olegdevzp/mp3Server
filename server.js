@@ -79,55 +79,64 @@ app.post("/", (req, res) => {
   console.log(' post /');
 
 })
-app.post("/upload", (req, res) => {
-  console.log('post file upload',req.body);
-  let file = { name: 'audio-file', file: binary(req.body.audio-file) }
-  insertFile(file, res)
+app.post("/upload", async (req, res) => {
+  console.log('post file upload', req.body);
+  let file = { name: 'audio-file', file: binary(req.body.audio - file) }
+  makeFile.then((file)=>{
+    insertFile(file, res)
+  })
+   
 })
 
+async function makeFile(data) {
+  return await new Promise((resolve, reject) => {
+    let file = { name: 'audio-file', file: binary(req.body.audio - file) }
+    resolve(file);
+  })
+}
 
 function insertFile(file, res) {
   mongoClient.connect(process.env.DATABASE, { useNewUrlParser: true }, (err, client) => {
-      if (err) {
-          return err
+    if (err) {
+      return err
+    }
+    else {
+      let db = client.db('natours')
+      let collection = db.collection('audio')
+      try {
+        collection.insertOne(file)
+        console.log('File Inserted')
       }
-      else {
-          let db = client.db('natours')
-          let collection = db.collection('audio')
-          try {
-              collection.insertOne(file)
-              console.log('File Inserted')
-          }
-          catch (err) { 
-              console.log('Error while inserting:', err)
-          }
-          client.close()
-          res.redirect('/')
+      catch (err) {
+        console.log('Error while inserting:', err)
       }
+      client.close()
+      res.redirect('/')
+    }
 
   })
 }
 
 function getFiles(res) {
   mongoClient.connect(process.env.DATABASE, { useNewUrlParser: true }, (err, client) => {
-      if (err) {
-          return err
-      }
-      else {
-          let db = client.db('natours')
-          let collection = db.collection('audio')
-          collection.find({}).toArray((err, doc) => {
-              if (err) {
-                  console.log('err in finding doc:', err)
-              }
-              else {
-                  let buffer = doc[0].file.buffer
-                  fs.writeFileSync('uploadedImage.jpg', buffer)
-              }
-          })
-          client.close()
-          res.redirect('/')
-      }
+    if (err) {
+      return err
+    }
+    else {
+      let db = client.db('natours')
+      let collection = db.collection('audio')
+      collection.find({}).toArray((err, doc) => {
+        if (err) {
+          console.log('err in finding doc:', err)
+        }
+        else {
+          let buffer = doc[0].file.buffer
+          fs.writeFileSync('uploadedImage.jpg', buffer)
+        }
+      })
+      client.close()
+      res.redirect('/')
+    }
 
   })
 }
