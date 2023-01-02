@@ -80,7 +80,10 @@ app.post("/", (req, res) => {
 
 })
 app.post("/upload", async (req, res) => {
-  console.log('post file upload', req,res);
+  // console.log('post file upload', req);
+  if(!req.body) return res.sendStatus(400);
+
+  console.log('req.body.name', req.body['name']);
   // let file = { name: 'audio', file: binary(req.body['audio']) }
   makeFile(req.audio).then((file)=>{
     insertFile(file, res)
