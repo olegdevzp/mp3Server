@@ -108,7 +108,7 @@ app.post("/upload", async (req, res) => {
 // }
 
 function insertFile(file, res) {
-  mongoClient.connect(process.env.DATABASE, { useNewUrlParser: true }, (err, client) => {
+  mongoClient.connect(DB, { useNewUrlParser: true }, (err, client) => {
     console.log('mongoClient ', client);
 
     if (err) {
