@@ -119,12 +119,16 @@ function insertFile(file, res) {
       let db = client.db('natours')
       let collection = db.collection('audio')
       try {
-        collection.insertOne(file)
-        console.log('File Inserted')
+        collection.insertOne(file).then(()=>{
+          console.log('File Inserted')
+        },(err)=> {
+          console.log('Error while inserting1:', err)
+        })
+       
         res.send({success:'success'})
       }
       catch (err) {
-        console.log('Error while inserting:', err)
+        console.log('Error while inserting2:', err)
       }
       client.close()
       res.redirect('/')
